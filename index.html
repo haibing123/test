@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brainstorming Scroll</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #f9f9f9;
+    }
+    .section {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      gap: 40px;
+      opacity: 0;
+      transform: translateY(80px) scale(0.9);
+      transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .image-placeholder {
+      width: 40%;
+      height: 300px;
+      background: #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      color: #666;
+      border-radius: 10px;
+      flex-shrink: 0;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1), opacity 1s ease-out;
+    }
+    .section.visible .image-placeholder {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .text-block {
+      width: 60%;
+    }
+    .illustration {
+      font-weight: bold;
+      font-size: 1.3em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .text {
+      font-size: 1.1em;
+      line-height: 1.6;
+      color: #444;
+    }
+    @media (max-width: 768px) {
+      .section {
+        flex-direction: column;
+        text-align: center;
+      }
+      .image-placeholder, .text-block {
+        width: 100%;
+      }
+    }
+  </style>
+    .nav {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+    }
+    .nav a {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ccc;
+      display: block;
+      transition: background 0.3s;
+    }
+    .nav a.active {
+      background: #333;
+    }
+</style>
+</head>
+<body>
+  <div class="nav" id="nav"></div>
+  <div id="container"></div>
+
+  <script>
+    const content = [
+      { illustration: "1. The Invitation", text: "Can creativity be taught? How do we come up with a really innovative idea? What is the best method for generating ideas? For many, the answer to these problems is brainstorming. But does it work to solve problems or come up with new ideas?" },
+      { illustration: "2. The Brainstorm Begins", text: "Brainstorming is used most frequently to generate as many solutions to a particular problem as possible because quantity is favoured over quality. The basic assumption is that ‘two heads are better than one’ and that together, in groups, innovative solutions can be found." },
+      { illustration: "3. The Rules", text: "There are guidelines: Group size should be about five to seven people. No criticism allowed. Freewheeling is encouraged. Quantity and variety is also favoured. Encourage combinations and improvements. Notes must be taken." },
+      { illustration: "4. The Doubts Creep In", text: "(a) The fear that group members experience of their ideas being negatively evaluated by their peers; that is, evaluation apprehension." },
+      { illustration: "5. Too Many Voices", text: "(b) The difficulty of simultaneously listening to the ideas of others and thinking of one’s own ideas; that is, production blocking." },
+      { illustration: "6. Why Bother?", text: "(c) The tendency of people to put less effort into carrying out a task when they work in group settings; that is, social loafing." },
+      { illustration: "7. The Joy of It", text: "Individuals brainstorming in groups often report that they have lots of fun trying to find new ways to improve their jobs." },
+      { illustration: "8. Cognitive Stimulation", text: "People generating ideas in group settings seem to experience a condition of cognitive stimulation, which actually facilitates the generation of a higher quantity and quality of novel ideas." },
+      { illustration: "9. Groups vs Individuals", text: "It was found that the average accuracy of groups of five persons working together was greater than the average accuracy of five individuals working alone. However, it was also found that groups were substantially slower (as much as 40 per cent) than individuals in reaching solutions." },
+      { illustration: "10. Pooling of Ignorance", text: "Two heads may be better than one only when neither is a blockhead — the ‘pooling of ignorance’ does not help at all." },
+      { illustration: "11. The Paperclip Problem", text: "Other poorly structured tasks include: coming up with a new product name, image or logo; or finding new or original uses for familiar objects like a coat-hanger, paper clip or brick." },
+      { illustration: "12. Going Blind", text: "In one study, people were given 35 minutes to consider the consequences of everybody suddenly going blind... Individuals were far more productive than groups and arrived at their answers much faster." },
+      { illustration: "13. Misused Magic", text: "In other words, brainstorming is used when it is least effective, and rarely when it is most effective." },
+      { illustration: "14. The Written Fix", text: "These techniques are usually referred to as ‘brainwriting’ and aim at limiting the production blocking that occurs in brainstorming groups." },
+      { illustration: "15. The Digital Upgrade", text: "Brainstorming is also performed in ‘electronic brainstorming groups’, in which case the interaction among group members is taking place through computers, eliminating any oral communication." },
+      { illustration: "16. The Verdict", text: "The paradox of brainstorming is that this technique is most frequently used when research suggests it is least effective. Even though it’s popular and enjoyable, group interaction often inhibits the sharing of novel ideas." }
+    ];
+
+    const container = document.getElementById('container');
+    content.forEach(item => {
+      const section = document.createElement('div');
+      section.classList.add('section');
+      section.innerHTML = `
+        <div class="image-placeholder">[ Illustration: ${item.illustration} ]</div>
+        <div class="text-block">
+          <div class="illustration">${item.illustration}</div>
+          <div class="text">${item.text}</div>
+        </div>
+      `;
+      container.appendChild(section);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.2 });
+
+    const sections = document.querySelectorAll('.section');
+    const nav = document.getElementById('nav');
+    sections.forEach((el, index) => {
+      observer.observe(el);
+      const dot = document.createElement('a');
+      dot.href = `#section-${index}`;
+      nav.appendChild(dot);
+      el.id = `section-${index}`;
+    });
+
+    window.addEventListener('scroll', () => {
+      let current = 0;
+      sections.forEach((section, index) => {
+        const sectionTop = section.offsetTop;
+        if (pageYOffset >= sectionTop - window.innerHeight / 2) {
+          current = index;
+        }
+      });
+      document.querySelectorAll('.nav a').forEach((dot, index) => {
+        dot.classList.toggle('active', index === current);
+      });
+    });
+  </script>
+</body>
+</html>
